@@ -1,8 +1,16 @@
 
-const socket = require('socket.io-client')('http://localhost:3000');
+const debug = require('debug')('socket:test');
 
-socket.on('connect', onConnect);
+debug('starting client');
+var client = require('socket.io-client')('http://localhost:3001/hub', {
+  transports: ['websocket']
+});
 
-function onConnect(){
-  console.log('connect ' + socket.id);
-}
+client.on('connect', () => {
+  debug('connected');
+});
+
+client.on('data', (data, ack) => {
+  debug('data', data);
+  ack(Buffer.from('hi!', 'utf8'));
+});
